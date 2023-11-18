@@ -48,28 +48,31 @@ const Header = () => {
                 <div class="text-white text-lg font-bold">
                   <div className="py-2 px-2 rounded-md border bg-white text-gray-950 flex align-middle justify-center">
                     <Icon className="side-icons" icon="skill-icons:instagram" />
-                    <h2>sahad_azod</h2>
+                    <h2 class="mt-1 ml-1">sahad_azod</h2>
                   </div>
                 </div>
                 <ul class="flex space-x-4">
                   <li>  
-                    <a href="#" class="text-white">
+                    <a href="/" class="text-white">
                       Home
                     </a>
                   </li>
                   <li>
-                    <a href="#" class="text-white">
+                    <a href="/upload" class="text-white">
                       Buy Pixels
                     </a>
                   </li>
                   <li>
-                    <a href="#" class="text-white">
+                    <a href="/image" class="text-white">
                       About
                     </a>
                   </li>
                 </ul>
                 <div class="text-white text-lg font-bold">
-                  <Icon className="side-icons" icon="skill-icons:instagram" />
+                  <div className="py-2 px-2 rounded-md border bg-white text-gray-950 flex align-middle justify-center">
+                    <Icon className="side-icons" icon="skill-icons:twitter" />
+                    <h2 class="mt-1 ml-1">sahad_azod</h2>
+                  </div>
                 </div>
               </div>
             </nav>

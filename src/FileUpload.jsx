@@ -1,24 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
 
 const FileUpload = ({ closeHandler, sIndex }) => {
   const navigate = useNavigate();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [image, setImage] = useState(null);
+  const [url, setUrl] = useState(null)
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setImage(URL.createObjectURL(event.target.files[0]));
+  };
+
+  const handleUrl = (e) => {
+    setUrl(e.target.value)
+  };
 
   let fe = sIndex?.[0];
   let le = sIndex?.at(-1);
   let x = fe % 96;
-  let y = Number((fe / 96).toFixed());
+  let y = Number(Math.floor((fe / 96)).toFixed());
 
   let lx = (le % 96) + 1;
-  let ly = Number((le / 96).toFixed()) + 1;
+  let ly = Number(Math.floor((le / 96)).toFixed()) + 1;
 
   let width = lx - x;
   let height = ly - y;
-
-  console.log(x);
-  console.log(y);
-  console.log(width);
-  console.log(height);
 
   x *= 12;
   y *= 12;
@@ -28,8 +35,7 @@ const FileUpload = ({ closeHandler, sIndex }) => {
   const uploadHandler = () => {
     let images = [
       {
-        image:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR74Mqohk-dyI7eB-zhZh_rC_7NgYoig9__bw&usqp=CAU",
+        image,
         x,
         y,
         width,
@@ -102,7 +108,16 @@ const FileUpload = ({ closeHandler, sIndex }) => {
                         class="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-gray-900 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-gray-900 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary"
                         type="file"
                         id="formFile"
+                        onChange={handleFileChange}
                       />
+                      <input
+                        class="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 mt-2 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-gray-900 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-gray-900 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary"
+                        type="text"
+                        placeholder="URL"
+                        onChange={handleUrl}
+                      />
+
+                      {image && <img class="mt-2" src={image} height="100" width="100" />}
                     </div>
                   </div>
                 </div>

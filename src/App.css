@@ -4,6 +4,7 @@
 }
 .image-canvas{
   background-image: url("./assets/image.jpg");
+  background-size: contain;
 }
 .gold-gradient-text {
   color: rgba(252, 231, 0, 0.824);

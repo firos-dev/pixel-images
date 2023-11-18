@@ -1,7 +1,6 @@
 import "./App.css";
 import * as React from "react";
 import { useAreaSelection, useSelected } from "./area-selection";
-import { useDispatch } from "react-redux";
 import ImageMixer from "./ImageMixer";
 
 const SelectionContext = React.createContext(null);
@@ -51,7 +50,7 @@ const containerStyles = {
   gap: "1px",
   width: "1057px",
   maxWidth: "100%",
-  margin: "10ch auto",
+  margin: "15px auto",
   background: "#e5e5e5",
   alignItems: "center",
   justifyContent: "center",
@@ -66,8 +65,6 @@ const Container = React.forwardRef(({ children }, ref) => {
       </div>
   );
 });
-
-import { setSelected } from "./redux/play";
 import FileUpload from "./FileUpload";
 export default function Grid() {
   const [open, setOpen] = React.useState(false);
@@ -81,7 +78,6 @@ export default function Grid() {
     container: selectContainerRef,
     mouseRelease,
   });
-  const dispatch = useDispatch();
   const boxes = [...Array(8160).keys()].map((d, i) => <Box index={i} />);
 
   const closeHandler = () =>{
