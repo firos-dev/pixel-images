@@ -42,7 +42,8 @@ const FileUpload = ({ closeHandler, sIndex }) => {
         height,
       },
     ];
-    navigate("/image", { state: { images } });
+    console.log({ images, sIndex });
+    navigate("/image", { state: { images, sIndex } });
   };
 
   return (

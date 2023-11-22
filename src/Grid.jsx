@@ -1,6 +1,8 @@
 import "./App.css";
 import * as React from "react";
 import { useAreaSelection, useSelected } from "./area-selection";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "./config/firebase";
 import ImageMixer from "./ImageMixer";
 
 const SelectionContext = React.createContext(null);
@@ -14,12 +16,17 @@ const boxStyles = {
   height: "10px",
 };
 
+const disabledStyle = {
+  background: 'green'
+}
+
 let sIndex = [];
 
-const Box = ({ index }) => {
+const Box = ({ index, sell }) => {
   const ref = React.useRef(null);
   const selection = React.useContext(SelectionContext);
   const isSelected = useSelected(ref, selection);
+  
   if (isSelected) {
     let find = sIndex.find((a) => a === index);
     if (!find && find !== 0) {
@@ -31,11 +38,15 @@ const Box = ({ index }) => {
       sIndex.splice(i, 1);
     }
   }
+
   return (
     <div
       ref={ref}
       style={{
         ...boxStyles,
+        ...(sell && {
+          background: "#edeeff",
+        }),
         ...(isSelected && {
           background: "#ff0000",
         }),
@@ -60,35 +71,63 @@ const containerStyles = {
 
 const Container = React.forwardRef(({ children }, ref) => {
   return (
-      <div ref={ref} style={containerStyles}>
-        {children}
-      </div>
+    <div ref={ref} style={containerStyles}>
+      {children}
+    </div>
   );
 });
 import FileUpload from "./FileUpload";
 export default function Grid() {
   const [open, setOpen] = React.useState(false);
   const selectContainerRef = React.useRef(null);
+  const [data, setData] = React.useState(null);
+
+  React.useEffect(() => {
+    loadImage();
+  }, []);
+
+  const loadImage = async () => {
+    const docRef = doc(db, "data", "PXIMAGE1");
+
+    getDoc(docRef).then((docSnapshot) => {
+      if (docSnapshot.exists()) {
+        setData(docSnapshot.data());
+      } else {
+        console.log("No such document!");
+      }
+    });
+  };
+  function arrayIntersection(arr1, arr2) {
+    return arr1?.filter(value => arr2.includes(value));
+  }
   const mouseRelease = () => {
-    if(sIndex?.length){
-      setOpen(sIndex.sort((a,b) => a-b));
+    
+    if (sIndex?.length) {
+      if(arrayIntersection(data?.pixel_index, sIndex)?.length){
+        
+      }else{
+        setOpen(sIndex.sort((a, b) => a - b));
+      }
     }
   };
   const selection = useAreaSelection({
     container: selectContainerRef,
     mouseRelease,
   });
-  const boxes = [...Array(8160).keys()].map((d, i) => <Box index={i} />);
+  const boxes = [...Array(8160).keys()].map((d, i) => {
+  return (<Box index={i} sell={data?.pixel_index.indexOf(i) !== -1} />)
+});
 
-  const closeHandler = () =>{
-    setOpen(false)
-    sIndex = []
-  }
+  const closeHandler = () => {
+    setOpen(false);
+    sIndex = [];
+  };
 
   return (
     <div className="App">
       <SelectionContext.Provider value={selection}>
-        <Container ref={selectContainerRef}>{boxes}</Container>
+         <Container ref={selectContainerRef}>{boxes}</Container>
+        <div style={{marginTop:"15px"}}>.</div>
       </SelectionContext.Provider>
       {open && <FileUpload closeHandler={() => setOpen(false)} sIndex={open} />}
     </div>

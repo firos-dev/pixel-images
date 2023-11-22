@@ -3,8 +3,8 @@
   font-family: sans-serif;
 }
 .image-canvas{
-  background-image: url("./assets/image.jpg");
-  background-size: contain;
+  /* background-image: url("./assets/image.jpg"); */
+  /* background-size: contain; */
 }
 .gold-gradient-text {
   color: rgba(252, 231, 0, 0.824);
@@ -17,4 +17,10 @@
 
 .side-icons{
   font-size: 35px;
+}
+
+.backgroundIMG{
+  width: 100%;
+  background-size: contain;
+  background-position: cover;
 }
