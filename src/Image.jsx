@@ -2,32 +2,28 @@ import React, { useEffect, useState } from "react";
 import image from "./assets/image.jpg";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./config/firebase";
-import background from './assets/image.jpg'
+import background from "./assets/image.jpg";
+import { useSelector } from "react-redux";
 
 const Image = () => {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    loadImage();
-  }, []);
-
-  const loadImage = async () => {
-    const docRef = doc(db, "data", "PXIMAGE1");
-
-    getDoc(docRef).then((docSnapshot) => {
-      if (docSnapshot.exists()) {
-        setData(docSnapshot.data());
-      } else {
-        console.log("No such document!");
-      }
-    });
-  };
-
-  console.log(data);
+  const { data } = useSelector((state) => state.data);
 
   return (
     <div className="w-full flex justify-center items-center pt-3 m-0">
-      <img src={data?.image ||image} width="1057px" />
+      <img src={data?.image || image} width="1057px" useMap="#mainImage" />
+
+      <map name="mainImage">
+        {data?.link_cordinates?.map((c) => {
+          return (
+            <area
+              shape="rect"
+              coords={c.cordinate}
+              alt="Computer"
+              href={c.url}
+            />
+          );
+        })}
+      </map>
     </div>
   );
 };

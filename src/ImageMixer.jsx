@@ -1,35 +1,20 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useLocation } from "react-router";
-import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "./config/firebase";
-import background from "./assets/image.jpg"
+import background from "./assets/image.jpg";
+import { useSelector } from "react-redux";
 
 const ImageMixer = () => {
   const canvasRef = useRef(null);
   const location = useLocation();
   const images = location?.state?.images;
   const sIndex = location?.state?.sIndex;
-  const [data, setData] = useState(null);
+  const { data } = useSelector((state) => state.data);
 
   useEffect(() => {
-    loadImage();
-  }, []);
-
-  const loadImage = async () => {
-    const docRef = doc(db, "data", "PXIMAGE1");
-
-    getDoc(docRef).then((docSnapshot) => {
-      if (docSnapshot.exists()) {
-        setData(docSnapshot.data());
-      } else {
-        console.log("No such document!");
-      }
-    });
-  };
-
-  useEffect(() => {
-    data && imageMix()
-  }, [images,data]);
+    data && imageMix();
+  }, [images, data]);
 
   const imageMix = () => {
     const canvas = canvasRef.current;
@@ -39,18 +24,18 @@ const ImageMixer = () => {
     context.clearRect(0, 0, canvas.width, canvas.height);
     const bg = new Image();
     bg.src = data.image || background;
-    
+
     // Loop through each image and draw it onto the canvas
     images?.forEach((image, index) => {
       const img = new Image();
       img.src = image.image;
       img.width = image.width;
       img.height = image.height;
-      
+
       // Adjust the position based on the image size and index
       const x = image.x; // Adjust this value as needed
       const y = image.y;
-      
+
       // Draw the image onto the canvas
       img.onload = () => {
         bg.onload = () => {
@@ -59,19 +44,30 @@ const ImageMixer = () => {
         };
       };
     });
-  }
+  };
 
   const saveImage = async () => {
     let indexes = data?.pixel_index || [];
-    indexes = [...indexes, ...sIndex]; 
+    let linkCordinates = data?.link_cordinates || [];
+    indexes = [...indexes, ...sIndex];
+    const url = location.state.url;
     const canvas = canvasRef.current;
     const image = canvas.toDataURL("image/png");
     const docRef = doc(db, "data", "PXIMAGE1");
+    const im = images?.[0];
+
+    if (!im) {
+      return;
+    }
+let co = { cordinate: `${im.x}, ${im.y}, ${im.m}, ${im.n}`, url }
+    console.log(linkCordinates);
+    linkCordinates = [...linkCordinates, co];
+
     const value = {
       id: "dfdsfsdfsd",
       image,
-      url: "http://google.com",
       pixel_index: indexes,
+      link_cordinates: linkCordinates,
     };
     await setDoc(docRef, value);
   };
@@ -82,7 +78,7 @@ const ImageMixer = () => {
         <canvas
           ref={canvasRef}
           width="1152px"
-          height="1054px"
+          height="1020px"
           className="image-canvas"
         />
         <button

@@ -17,8 +17,8 @@ const boxStyles = {
 };
 
 const disabledStyle = {
-  background: 'green'
-}
+  background: "green",
+};
 
 let sIndex = [];
 
@@ -26,7 +26,7 @@ const Box = ({ index, sell }) => {
   const ref = React.useRef(null);
   const selection = React.useContext(SelectionContext);
   const isSelected = useSelected(ref, selection);
-  
+
   if (isSelected) {
     let find = sIndex.find((a) => a === index);
     if (!find && find !== 0) {
@@ -77,35 +77,20 @@ const Container = React.forwardRef(({ children }, ref) => {
   );
 });
 import FileUpload from "./FileUpload";
+import { useSelector } from "react-redux";
 export default function Grid() {
   const [open, setOpen] = React.useState(false);
   const selectContainerRef = React.useRef(null);
-  const [data, setData] = React.useState(null);
 
-  React.useEffect(() => {
-    loadImage();
-  }, []);
+  const { data } = useSelector((state) => state.data);
 
-  const loadImage = async () => {
-    const docRef = doc(db, "data", "PXIMAGE1");
-
-    getDoc(docRef).then((docSnapshot) => {
-      if (docSnapshot.exists()) {
-        setData(docSnapshot.data());
-      } else {
-        console.log("No such document!");
-      }
-    });
-  };
   function arrayIntersection(arr1, arr2) {
-    return arr1?.filter(value => arr2.includes(value));
+    return arr1?.filter((value) => arr2.includes(value));
   }
   const mouseRelease = () => {
-    
     if (sIndex?.length) {
-      if(arrayIntersection(data?.pixel_index, sIndex)?.length){
-        
-      }else{
+      if (arrayIntersection(data?.pixel_index, sIndex)?.length) {
+      } else {
         setOpen(sIndex.sort((a, b) => a - b));
       }
     }
@@ -115,8 +100,13 @@ export default function Grid() {
     mouseRelease,
   });
   const boxes = [...Array(8160).keys()].map((d, i) => {
-  return (<Box index={i} sell={data?.pixel_index.indexOf(i) !== -1} />)
-});
+    return (
+      <Box
+        index={i}
+        sell={data?.pixel_index ? data?.pixel_index?.indexOf(i) !== -1 : null}
+      />
+    );
+  });
 
   const closeHandler = () => {
     setOpen(false);
@@ -126,8 +116,8 @@ export default function Grid() {
   return (
     <div className="App">
       <SelectionContext.Provider value={selection}>
-         <Container ref={selectContainerRef}>{boxes}</Container>
-        <div style={{marginTop:"15px"}}>.</div>
+        <Container ref={selectContainerRef}>{boxes}</Container>
+        <div style={{ marginTop: "15px" }}>.</div>
       </SelectionContext.Provider>
       {open && <FileUpload closeHandler={() => setOpen(false)} sIndex={open} />}
     </div>

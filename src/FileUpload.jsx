@@ -5,7 +5,7 @@ const FileUpload = ({ closeHandler, sIndex }) => {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
   const [image, setImage] = useState(null);
-  const [url, setUrl] = useState(null)
+  const [url, setUrl] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -13,16 +13,16 @@ const FileUpload = ({ closeHandler, sIndex }) => {
   };
 
   const handleUrl = (e) => {
-    setUrl(e.target.value)
+    setUrl(e.target.value);
   };
 
   let fe = sIndex?.[0];
   let le = sIndex?.at(-1);
   let x = fe % 96;
-  let y = Number(Math.floor((fe / 96)).toFixed());
+  let y = Number(Math.floor(fe / 96).toFixed());
 
   let lx = (le % 96) + 1;
-  let ly = Number(Math.floor((le / 96)).toFixed()) + 1;
+  let ly = Number(Math.floor(le / 96).toFixed()) + 1;
 
   let width = lx - x;
   let height = ly - y;
@@ -32,6 +32,9 @@ const FileUpload = ({ closeHandler, sIndex }) => {
   width *= 12;
   height *= 12;
 
+  let m = x + width;
+  let n = y + height;
+
   const uploadHandler = () => {
     let images = [
       {
@@ -40,10 +43,12 @@ const FileUpload = ({ closeHandler, sIndex }) => {
         y,
         width,
         height,
+        m,
+        n,
       },
     ];
-    console.log({ images, sIndex });
-    navigate("/image", { state: { images, sIndex } });
+    
+    navigate("/image", { state: { images, sIndex, url } });
   };
 
   return (
@@ -118,7 +123,14 @@ const FileUpload = ({ closeHandler, sIndex }) => {
                         onChange={handleUrl}
                       />
 
-                      {image && <img class="mt-2" src={image} height="100" width="100" />}
+                      {image && (
+                        <img
+                          class="mt-2"
+                          src={image}
+                          height="100"
+                          width="100"
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
