@@ -5,14 +5,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { saveData } from "./redux/data";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./config/firebase";
+import { useLocation } from "react-router";
 
 const Header = () => {
+  const location = useLocation()
   const dispatch = useDispatch()
   const {data} = useSelector(state => state.data)
+  const { refresh } = useSelector((state) => state.data);
 
   useEffect(() => {
     loadImage();
-  }, []);
+  }, [refresh]);
 
   const loadImage = async () => {
     const docRef = doc(db, "data", "PXIMAGE1");
@@ -43,9 +46,9 @@ const Header = () => {
         <div class="gold-gradient">
           <div class="text-sm font-bold gold-gradient-text py-3 px-20">
             <div className="py-2 px-4 rounded-md border border-black text-gray-950">
-              Sold : {data?.pixel_index?.length}
+              Sold : { data && data?.pixel_index?.length}
               <br />
-              Available: {8160 - data?.pixel_index?.length}
+              Available: {data &&  8160 - data?.pixel_index?.length}
             </div>
           </div>
         </div>

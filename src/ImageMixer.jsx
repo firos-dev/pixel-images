@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "./config/firebase";
 import background from "./assets/image.jpg";
 import { useSelector } from "react-redux";
+import SuccessAlert from "./successAlert";
 
 const ImageMixer = () => {
   const canvasRef = useRef(null);
@@ -11,10 +12,20 @@ const ImageMixer = () => {
   const images = location?.state?.images;
   const sIndex = location?.state?.sIndex;
   const { data } = useSelector((state) => state.data);
+  const [success, setSuccess] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     data && imageMix();
   }, [images, data]);
+
+  useEffect(() => {
+    setSuccess("Pixel has been successfully purchased");
+    setTimeout(() => {
+      setSuccess(null);
+      saveImage();
+    }, 3000);
+  }, []);
 
   const imageMix = () => {
     const canvas = canvasRef.current;
@@ -59,8 +70,7 @@ const ImageMixer = () => {
     if (!im) {
       return;
     }
-let co = { cordinate: `${im.x}, ${im.y}, ${im.m}, ${im.n}`, url }
-    console.log(linkCordinates);
+    let co = { cordinate: `${im.co}`, url };
     linkCordinates = [...linkCordinates, co];
 
     const value = {
@@ -70,10 +80,12 @@ let co = { cordinate: `${im.x}, ${im.y}, ${im.m}, ${im.n}`, url }
       link_cordinates: linkCordinates,
     };
     await setDoc(docRef, value);
+    navigate("/", { state: { refresh: true } });
   };
 
   return (
     <div className="w-full mt-2 mb-5">
+      {success && <SuccessAlert closeHandler={() => setSuccess(null)} />}
       <div className="flex items-center justify-center flex-col">
         <canvas
           ref={canvasRef}
@@ -81,12 +93,12 @@ let co = { cordinate: `${im.x}, ${im.y}, ${im.m}, ${im.n}`, url }
           height="1020px"
           className="image-canvas"
         />
-        <button
+        {/* <button
           className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
           onClick={saveImage}
         >
           Save Image
-        </button>
+        </button> */}
       </div>
     </div>
   );

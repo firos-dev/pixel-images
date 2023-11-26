@@ -32,8 +32,12 @@ const FileUpload = ({ closeHandler, sIndex }) => {
   width *= 12;
   height *= 12;
 
-  let m = x + width;
-  let n = y + height;
+  let k = x / 1.0885;
+  let l = y / 1.0885;
+  let m = (x + width) / 1.0885;
+  let n = (y + height) / 1.0885;
+
+  let co = `${k}, ${l}, ${m}, ${n}`;
 
   const uploadHandler = () => {
     let images = [
@@ -43,11 +47,10 @@ const FileUpload = ({ closeHandler, sIndex }) => {
         y,
         width,
         height,
-        m,
-        n,
+        co,
       },
     ];
-    
+
     navigate("/image", { state: { images, sIndex, url } });
   };
 
